@@ -24,13 +24,14 @@ def format_and_validate_sql(response: str) -> str:
         validate_sql(sql_query)
     except (InvalidQueryException, HarmfulPatternException) as e:
         print(f"Query validation failed: {e}")
-    return format_sql_one_liner(sql_query)
+    # return format_sql_one_liner(sql_query)
+    return sql_query
 
 
 if __name__ == "__main__":
     for i, query in enumerate(QUERIES):
         print('\n-----------------------------------\n')
-        print(f"Executing query: {i+1}.{query}")
+        print(f"Executing query: {i+1}. {query}")
         response = query_open_ai(query)
         sql_query = format_and_validate_sql(response)
         print("SQL query:", sql_query)
