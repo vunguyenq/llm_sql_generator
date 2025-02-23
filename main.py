@@ -28,8 +28,8 @@ def format_and_validate_sql(response: str) -> str:
 
 
 if __name__ == "__main__":
-    for query in QUERIES[:1]:
-        print(f"Executing query: {query}")
+    for i, query in enumerate(QUERIES[:1]):
+        print(f"Executing query: {i+1}.{query}")
         response = query_open_ai(query)
         sql_query = format_and_validate_sql(response)
         print("SQL query:", sql_query)
