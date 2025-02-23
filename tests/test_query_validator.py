@@ -1,12 +1,12 @@
-import pytest
-import sys
 import os
+import sys
+
+import pytest
+
+from executors.query_validator import HarmfulPatternException, safety_check_sql
+
 # Add the root folder to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from executors.query_validator import safety_check_sql
-
-from executors.query_validator import safety_check_sql, HarmfulPatternException
 
 def test_safety_check_sql_no_harmful_patterns():
     query = "SELECT * FROM users WHERE id = 1"
