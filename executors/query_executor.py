@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import openai
-
+import re
 import config
 
 OPENAI_API_KEY = config.API_KEY
@@ -12,8 +12,19 @@ def create_system_context() -> str:
     erd = (current_dir / 'database_erd.mermaid').read_text()
     return f"{system_context}\n```mermaid{erd}```"
 
+def parse_type_hint(prompt: str) -> str:
+    """Detects and converts hints like '[type: field]' to explicit sentences."""
+    pattern = r"\[(\w+):\s*(\w+)\]$"
+    match = re.search(pattern, prompt)
+
+    if match:
+        data_type, field_name = match.groups()
+        explicit_sentence = f"Return a {field_name} as {data_type}"
+        prompt = re.sub(pattern, explicit_sentence, prompt)
+    return prompt
+
 def format_user_prompt(prompt: str) -> str:
-    return f"{prompt}. Answer with only the SQL statement."
+    return f"{parse_type_hint(prompt)}. Answer with only the SQL statement."
 
 def extract_sql_from_response(response: str) -> str:
     return response.strip().replace('```sql', '').replace('```', '')
