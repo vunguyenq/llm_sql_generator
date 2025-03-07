@@ -9,8 +9,12 @@ GROUP BY oi.seller_id
 ORDER BY COUNT(DISTINCT oi.order_id) DESC
 LIMIT 1;
 
+-- Result: seller_id = None
+
 -- Issue: customer_city is not exactly typed 'Rio de Janeiro'. In customers table it is 'rio de janeiro'
 -- => OpenAI understands db schema but not data points
+
+-- City name verification
 SELECT * FROM customers c WHERE customer_city LIKE '%rio de%%'
 
 ------------------------------------------------------------------------------------------------------
@@ -23,7 +27,7 @@ JOIN order_items AS oitm ON ord.order_id = oitm.order_id
 JOIN products AS prod ON oitm.product_id = prod.product_id
 WHERE prod.product_category_name = 'beleza_saude';
 
--- Result looks ok
+-- Result: avg_score = 4.1427682737169516 => correct
 
 ------------------------------------------------------------------------------------------------------
 -- 3. How many sellers have completed orders worth more than 100,000 BRL in total? [integer: count]
@@ -37,7 +41,7 @@ HAVING SUM(oi.price) > 100000;
 
 -- Issue: OpenAI query returns a list of all 17 sellers matching the criteria. Lacking the step of counting how many sellers there are (17)
 -- => OpenAI doesnt return nested queries or Common Table Expression (WITH clause)?
--- Corrected answer:
+-- Correct answer:
 SELECT COUNT(*) FROM
 (SELECT DISTINCT oi.seller_id
 FROM orders o
@@ -58,6 +62,7 @@ GROUP BY p.product_category_name
 ORDER BY COUNT(*) DESC
 LIMIT 1;
 
+-- Result: product_category_name = beleza_saude
 -- Issue: Ambigous query. Review is on order level, not on order item/ product level?
 
 ------------------------------------------------------------------------------------------------------
@@ -76,7 +81,7 @@ GROUP BY payment_installments
 ORDER BY COUNT(*) DESC
 LIMIT 1;
 
--- Result looks OK
+-- Result: payment_installments = 10 => Correct
 
 ------------------------------------------------------------------------------------------------------
 -- 6. Which city has the highest average freight value per order? [string: city_name]
@@ -89,6 +94,7 @@ GROUP BY s.seller_city
 ORDER BY AVG(oi.freight_value) DESC
 LIMIT 1;
 
+-- Result: seller_city = lages - sc
 -- Result looks ok but still ambigous query. By "city", does this mean the city where seller or customer is located?
 
 ------------------------------------------------------------------------------------------------------
@@ -101,7 +107,7 @@ GROUP BY p.product_category_name
 ORDER BY AVG(oi.price) DESC
 LIMIT 1;
 
--- Result is correct
+-- Result: product_category_name: 'pcs' => correct
 
 ------------------------------------------------------------------------------------------------------
 -- 8. Which product category has the shortest average delivery time? [string: category_name]
@@ -115,7 +121,7 @@ GROUP BY p.product_category_name
 ORDER BY AVG(JULIANDAY(o.order_delivered_customer_date) - JULIANDAY(o.order_purchase_timestamp)) ASC
 LIMIT 1;
 
--- Result looks correct
+-- Result: product_catgory_name = artes_e_artesanato
 
 ------------------------------------------------------------------------------------------------------
 -- 9. How many orders have items from multiple sellers? [integer: count]
@@ -125,7 +131,7 @@ FROM order_items
 GROUP BY order_id
 HAVING COUNT(DISTINCT seller_id) > 1;
 
--- Issue: Similar to question 3, generated query returns the right list of orders having multiple selæers, but did not do the last step of counting number of orders
+-- Issue: Similar to question 3, generated query returns the correct list of 1278 orders having multiple selï¿½ers, but did not do the last step of counting number of orders
 -- Corrected query:
 SELECT count(*) FROM
 (SELECT DISTINCT order_id
@@ -140,4 +146,4 @@ SELECT (100.0 * SUM(CASE WHEN order_delivered_customer_date < order_estimated_de
 FROM orders
 WHERE order_delivered_customer_date IS NOT NULL AND order_estimated_delivery_date IS NOT NULL;
 
--- Result looks OK
+-- Result: percentage_delivered_early = 91.88710145528421 => Correct
