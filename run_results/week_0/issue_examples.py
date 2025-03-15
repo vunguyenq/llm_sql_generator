@@ -2,7 +2,7 @@ import openai
 import config
 from executors.query_executor import create_system_context, format_user_prompt
 
-OPENAI_API_KEY = config.API_KEY
+OPENAI_API_KEY = config.OPEN_API_KEY
 
 def query_open_ai(prompt: str, model: str = 'gpt-4o') -> str:
     """Sends a prompt to GPT-4 with structured roles."""

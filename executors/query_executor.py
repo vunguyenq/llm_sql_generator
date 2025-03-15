@@ -4,7 +4,7 @@ import openai
 import re
 import config
 
-OPENAI_API_KEY = config.API_KEY
+OPENAI_API_KEY = config.OPEN_API_KEY
 
 def create_system_context() -> str:
     current_dir = Path(__file__).parent

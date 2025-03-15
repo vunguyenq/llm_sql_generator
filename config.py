@@ -3,4 +3,4 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-API_KEY = os.getenv("API_KEY")
+OPEN_API_KEY = os.getenv("OPEN_API_KEY")
