@@ -1,9 +1,9 @@
 import re
 from pathlib import Path
 
-import openai
+from openai import AzureOpenAI, OpenAI
 
-import config
+import src.config as config
 
 OPENAI_API_KEY = config.OPENAI_API_KEY
 
@@ -33,7 +33,7 @@ def extract_sql_from_response(response: str) -> str:
 def query_open_ai(prompt: str, model: str = 'gpt-4o') -> str:
     """Sends a prompt to GPT-4 with structured roles."""
     try:
-        client = openai.OpenAI(api_key=OPENAI_API_KEY)
+        client = OpenAI(api_key=OPENAI_API_KEY)
         response = client.chat.completions.create(
             model=model,
             messages=[
@@ -41,6 +41,23 @@ def query_open_ai(prompt: str, model: str = 'gpt-4o') -> str:
                 {"role": "user", "content": format_user_prompt(prompt)}
             ],
             max_tokens=200
+        )
+        return response.choices[0].message.content
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return ""
+
+def query_azure_open_ai(messages: str) -> str:
+    """Sends a prompt to GPT-4 with structured roles."""
+    try:
+        client = AzureOpenAI(azure_endpoint=config.AZURE_OPENAI_ENDPOINT,
+                             api_key=config.AZURE_OPENAI_API_KEY,
+                             api_version=config.AZURE_OPENAI_API_VERSION
+                             )
+        response = client.chat.completions.create(
+            model=config.AZURE_OPENAI_DEPLOYMENT,
+            messages=messages
         )
         return response.choices[0].message.content
 
