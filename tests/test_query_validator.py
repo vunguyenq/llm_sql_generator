@@ -3,7 +3,7 @@ import sys
 
 import pytest
 
-from executors.query_validator import HarmfulPatternException, safety_check_sql
+from src.executors.query_validator import HarmfulPatternException, safety_check_sql
 
 # Add the root folder to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))

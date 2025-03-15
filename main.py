@@ -1,9 +1,9 @@
-from executors.query_executor import extract_sql_from_response, query_open_ai
-from executors.query_validator import (HarmfulPatternException,
+from src.executors.query_executor import extract_sql_from_response, query_open_ai
+from src.executors.query_validator import (HarmfulPatternException,
                                        InvalidQueryException,
                                        format_sql_one_liner, safety_check_sql,
                                        validate_sql)
-from executors.sql_executor import query_db
+from src.executors.sql_executor import query_db
 
 QUERIES = ['Which seller has delivered the most orders to customers in Rio de Janeiro? [string: seller_id]',
            "What's the average review score for products in the 'beleza_saude' category? [float: score]",

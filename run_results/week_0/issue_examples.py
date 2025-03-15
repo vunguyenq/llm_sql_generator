@@ -1,6 +1,6 @@
 import openai
 import config
-from executors.query_executor import create_system_context, format_user_prompt
+from src.executors.query_executor import create_system_context, format_user_prompt
 
 OPENAI_API_KEY = config.OPEN_API_KEY
 
