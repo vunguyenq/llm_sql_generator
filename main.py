@@ -1,9 +1,13 @@
-from src.executors.query_executor import extract_sql_from_response, query_open_ai
+import logging
+
+from src.executors.query_executor import (extract_sql_from_response,
+                                          query_open_ai)
 from src.executors.query_validator import (HarmfulPatternException,
-                                       InvalidQueryException,
-                                       format_sql_one_liner, safety_check_sql,
-                                       validate_sql)
+                                           InvalidQueryException,
+                                           format_sql_one_liner,
+                                           safety_check_sql, validate_sql)
 from src.executors.sql_executor import query_db
+from src.utils.logging_utils import setup_logging
 
 QUERIES = ['Which seller has delivered the most orders to customers in Rio de Janeiro? [string: seller_id]',
            "What's the average review score for products in the 'beleza_saude' category? [float: score]",
@@ -23,13 +27,14 @@ def format_and_validate_sql(response: str) -> str:
         safety_check_sql(sql_query)
         validate_sql(sql_query)
     except (InvalidQueryException, HarmfulPatternException) as e:
-        print(f"Query validation failed: {e}")
+        logging.error(f"Query validation failed: {e}")
     # return format_sql_one_liner(sql_query)
     return sql_query
 
 
 if __name__ == "__main__":
-    for i, query in enumerate(QUERIES):
+    setup_logging()
+    for i, query in enumerate(QUERIES[:2]):
         print('\n-----------------------------------\n')
         print(f"Executing query: {i+1}. {query}")
         response = query_open_ai(query)
