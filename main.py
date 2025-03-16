@@ -42,7 +42,7 @@ def format_and_validate_sql(sql_query: str) -> str:
 
 if __name__ == "__main__":
     setup_logging(console=False)
-    for i, question in enumerate(QUERIES[:2]):
+    for i, question in enumerate(QUERIES):
         print('\n-----------------------------------\n')
         print(f"Executing query: {i+1}. {question}")
         sql_query = send_user_query(question)
