@@ -1,3 +1,4 @@
+import logging
 import re
 from pathlib import Path
 
@@ -48,8 +49,11 @@ def query_open_ai(prompt: str, model: str = 'gpt-4o') -> str:
         print(f"Error: {e}")
         return ""
 
-def query_azure_open_ai(messages: str) -> str:
+def query_azure_open_ai(messages: str, log: bool = False) -> str:
     """Sends a prompt to GPT-4 with structured roles."""
+    if log:
+        logging.info(f"Query prompt: {messages}")  
+
     try:
         client = AzureOpenAI(azure_endpoint=config.AZURE_OPENAI_ENDPOINT,
                              api_key=config.AZURE_OPENAI_API_KEY,
@@ -59,8 +63,13 @@ def query_azure_open_ai(messages: str) -> str:
             model=config.AZURE_OPENAI_DEPLOYMENT,
             messages=messages
         )
-        return response.choices[0].message.content
 
     except Exception as e:
         print(f"Error: {e}")
+        logging.error(f"Query failed: {e}")
         return ""
+
+    if log:
+        logging.info(f"Query response: {response.choices[0].message.content}")
+        logging.info(f"Prompt tokens: {response.usage.prompt_tokens}. Completion tokens: {response.usage.completion_tokens}. Total tokens: {response.usage.total_tokens}")       
+    return response.choices[0].message.content

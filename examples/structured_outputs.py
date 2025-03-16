@@ -1,18 +1,18 @@
-from openai import AzureOpenAI
-from pydantic import BaseModel, Field
-from dotenv import load_dotenv
+import sys
 import os
 
-load_dotenv()
-AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
-AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
-AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION")
-AZURE_OPENAI_DEPLOYMENT = os.getenv("AZURE_OPENAI_DEPLOYMENT")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))  # allow importing from /src
 
+from src import config
+from src.utils.logging_utils import setup_logging
+from openai import AzureOpenAI
+from pydantic import BaseModel, Field
 
-client = AzureOpenAI(azure_endpoint=AZURE_OPENAI_ENDPOINT,
-                             api_key=AZURE_OPENAI_API_KEY,
-                             api_version=AZURE_OPENAI_API_VERSION
+setup_logging("logs")
+
+client = AzureOpenAI(azure_endpoint=config.AZURE_OPENAI_ENDPOINT,
+                             api_key=config.AZURE_OPENAI_API_KEY,
+                             api_version=config.AZURE_OPENAI_API_VERSION
                              )
 class Step(BaseModel):
     explanation: str
@@ -21,7 +21,7 @@ class Step(BaseModel):
 class MathReasoning(BaseModel):
     steps: list[Step]
     final_answer: str
-    famous_quote: str = Field(..., description="A famous quote that is not related to math.")
+    # famous_quote: str = Field(..., description="A famous quote that is not related to math.")
 
 completion = client.beta.chat.completions.parse(
     model="gpt-4o-2024-08-06",
@@ -36,4 +36,5 @@ math_reasoning = completion.choices[0].message.parsed
 
 print("Steps:", math_reasoning.steps)
 print("Final Answer:", math_reasoning.final_answer)
-print("Quote:", math_reasoning.famous_quote)
+print(f"Prompt tokens: {completion.usage.prompt_tokens}. Completion tokens: {completion.usage.completion_tokens}. Total tokens: {completion.usage.total_tokens}")
+# print("Quote:", math_reasoning.famous_quote)
