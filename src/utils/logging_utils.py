@@ -13,7 +13,7 @@ def cleanup_log_file(file_path: Path):
         f.writelines(latest_entries)
 
 
-def setup_logging(output_dir: Union[str, Path] = 'logs', filename: str = 'logging.log') -> None:
+def setup_logging(console: bool = True, output_dir: Union[str, Path] = 'logs', filename: str = 'logging.log') -> None:
     """Set up logging to both file and console for a specific processing job."""
     output_dir = Path(output_dir)
     log_file = output_dir / filename
@@ -33,11 +33,12 @@ def setup_logging(output_dir: Union[str, Path] = 'logs', filename: str = 'loggin
     logger.addHandler(fh)
 
     # Console handler - cleaner output without timestamps
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
-    ch_formatter = logging.Formatter("%(message)s")
-    ch.setFormatter(ch_formatter)
-    logger.addHandler(ch)
+    if console:
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.INFO)
+        ch_formatter = logging.Formatter("%(message)s")
+        ch.setFormatter(ch_formatter)
+        logger.addHandler(ch)
 
     logging.info(f"Started processing. Log file: {log_file}")
     

@@ -26,6 +26,10 @@ def format_sql_one_liner(query: str) -> str:
     """Format SQL into a one-liner."""
     return " ".join(sqlparse.format(query, reindent=True, keyword_case="upper").split())
 
+def pretify_sql(query: str) -> str:
+    """Format SQL query into a human-readable form."""
+    return sqlparse.format(query, reindent=True, keyword_case="upper")
+
 def safety_check_sql(query: str) -> None:
     '''´Looks for harmful patterns in the SQL query.
     Raises HarmfulPatternException if a harmful pattern is found.'''
