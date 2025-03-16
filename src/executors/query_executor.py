@@ -1,13 +1,12 @@
 import logging
-import re
 from typing import Type, Union
-from pydantic import BaseModel
-from pathlib import Path
-from src.context.structured_output import SQLGeneration
-from src.executors import query_builder
+
 from openai import AzureOpenAI, OpenAI
+from pydantic import BaseModel
 
 import src.config as config
+from src.context.structured_output import SQLGeneration
+from src.executors import query_builder
 
 OPENAI_API_KEY = config.OPENAI_API_KEY
 
@@ -38,8 +37,8 @@ def query_azure_open_ai(messages: str, response_format: Type[BaseModel] = None, 
     If response_format is not provided, returns result in structured output.
     Otherwise, returns json content of output message."""
     if log:
-        logging.info(f"Query prompt: {messages}")  
-        
+        logging.info(f"Query prompt: {messages}")
+
     if not response_format:
         response_format = SQLGeneration
 
@@ -63,7 +62,7 @@ def query_azure_open_ai(messages: str, response_format: Type[BaseModel] = None, 
     if log:
         logging.info(f"Query response: {response.choices[0].message.content}")
         logging.info(f"Prompt tokens: {response.usage.prompt_tokens}. Completion tokens: {response.usage.completion_tokens}. Total tokens: {response.usage.total_tokens}")
-    
+
     if response_format:
         return response.choices[0].message.parsed
     return response.choices[0].message.content
