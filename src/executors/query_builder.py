@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-
+from src.context.few_shot_examples import create_fewshots_assistant_answers
 
 def create_system_context() -> str:
     current_dir = Path(__file__).parent.parent
@@ -24,7 +24,9 @@ def parse_type_hint(prompt: str) -> str:
 def format_user_prompt(prompt: str) -> str:
     return f"{parse_type_hint(prompt)}. Answer with only the SQL statement."
 
-def create_query_message(prompt: str) -> dict:
+
+def create_query_message(prompt: str) -> list[dict]:
     return [{"role": "system", "content": create_system_context()},
+            *create_fewshots_assistant_answers(),
             {"role": "user", "content": prompt}
             ]
