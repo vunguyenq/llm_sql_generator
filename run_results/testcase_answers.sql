@@ -46,7 +46,7 @@ FROM products p
 JOIN order_items oi ON p.product_id = oi.product_id
 JOIN order_reviews r ON oi.order_id = r.order_id
 GROUP BY p.product_category_name
-HAVING COUNT(*) > 100
+HAVING COUNT(*) > 100  -- Where does this magic number come from?
 ORDER BY (COUNT(CASE WHEN r.review_score = 5 THEN 1 END) * 100.0 / COUNT(*)) DESC
 LIMIT 1;
 
@@ -70,7 +70,7 @@ FROM customers c
 JOIN orders o ON c.customer_id = o.customer_id
 JOIN order_items oi ON o.order_id = oi.order_id
 GROUP BY c.customer_city
-HAVING COUNT(DISTINCT o.order_id) > 50
+HAVING COUNT(DISTINCT o.order_id) > 50  -- Where does this magic number come from?
 ORDER BY AVG(oi.freight_value) DESC
 LIMIT 1;
 
@@ -100,7 +100,7 @@ WHERE o.order_status = 'delivered'
   AND o.order_delivered_customer_date IS NOT NULL
   AND o.order_purchase_timestamp IS NOT NULL
 GROUP BY p.product_category_name
-HAVING COUNT(*) > 100
+HAVING COUNT(*) > 100  -- Where does this magic number come from?
 ORDER BY AVG(JULIANDAY(o.order_delivered_customer_date) - JULIANDAY(o.order_purchase_timestamp)) ASC
 LIMIT 1;
 
