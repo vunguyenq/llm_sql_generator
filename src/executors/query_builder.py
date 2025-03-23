@@ -5,7 +5,6 @@ from src.context.few_shot_examples import create_fewshots_assistant_answers
 def create_system_context() -> str:
     current_dir = Path(__file__).parent.parent
     system_context = (current_dir / "context" / 'system_context.txt').read_text()
-
     erd = (current_dir / "context" / 'database_erd.mermaid').read_text()
     system_context = system_context.replace('{{DATABASE_SCHEMA}}', erd)
     return system_context
@@ -24,9 +23,7 @@ def parse_type_hint(prompt: str) -> str:
 def format_user_prompt(prompt: str) -> str:
     return f"{parse_type_hint(prompt)}. Answer with only the SQL statement."
 
-
 def create_query_message(prompt: str) -> list[dict]:
     return [{"role": "system", "content": create_system_context()},
             *create_fewshots_assistant_answers(),
             {"role": "user", "content": prompt}
-            ]
