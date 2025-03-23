@@ -1,11 +1,12 @@
 import re
 from pathlib import Path
 
+
 def create_system_context() -> str:
     current_dir = Path(__file__).parent.parent
     system_context = (current_dir / "context" / 'system_context.txt').read_text()
-    
-    erd = (current_dir / "context"/ 'database_erd.mermaid').read_text()
+
+    erd = (current_dir / "context" / 'database_erd.mermaid').read_text()
     system_context = system_context.replace('{{DATABASE_SCHEMA}}', erd)
     return system_context
 
@@ -24,7 +25,6 @@ def format_user_prompt(prompt: str) -> str:
     return f"{parse_type_hint(prompt)}. Answer with only the SQL statement."
 
 def create_query_message(prompt: str) -> dict:
-    return [
-                {"role": "system", "content": create_system_context()},
-                {"role": "user", "content": prompt}
+    return [{"role": "system", "content": create_system_context()},
+            {"role": "user", "content": prompt}
             ]
